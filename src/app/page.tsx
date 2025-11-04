@@ -9,7 +9,7 @@ export default function Page() {
     churchName: 'IPAD Ministério Restauração — Área Oeste do Paraná',
     templeImage: '/templo.jpg',
     pix: {
-      key: 'tesouraria.parana@restauramundo.com',
+      key: 'tesouraria.o.parana@restauramundo.com',
       qrcodeValue:
         '00020101021126590014br.gov.bcb.pix0137tesouraria.o.parana@restauramundo.com5204000053039865802BR5925IGREJA PENTECOSTAL ASSEMB6012PORTO ALEGRE62070503***63043EC2',
     },
@@ -93,7 +93,7 @@ export default function Page() {
         loanDue: 3500,
         templePayment: 0,
         loanPayment: 0,
-        available: 2809.99,
+        available: 5396.21,
         paidTotal: 0,
         supportFund: 0,
       },

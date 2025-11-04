@@ -1,6 +1,5 @@
 # 🏛️ Templo Sede de Cascavel — Área Oeste do Paraná
 
-> “Cada oferta é um tijolo espiritual neste templo de adoração.”
 > _“Deus ama ao que dá com alegria”_ (2 Coríntios 9:7b)
 
 ---

@@ -7,7 +7,7 @@
     "email": "rodrigocasara@gmail.com"
   },
   "description": "Painel de acompanhamento das quitações do templo sede de Cascavel - Oeste do Paraná",
-  "homepage": "https://Casara.github.io/templo-sede-cascavel",
+  "homepage": "https://casara.github.io/templo-sede-cascavel/",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",

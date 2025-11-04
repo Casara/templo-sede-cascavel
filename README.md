@@ -59,7 +59,7 @@ O projeto ficará disponível em http://localhost:3000.
 
 ## 🚀 Deploy público
 
-O projeto é hospedado via GitHub Pages, permitindo acesso público ao dashboard: https://Casara.github.io/templo-sede-cascavel/
+O projeto é hospedado via GitHub Pages, permitindo acesso público ao dashboard: https://casara.github.io/templo-sede-cascavel/
 
 O repositório é **privado**, mas o **deploy** é público para visualização da comunidade e dos contribuintes.
 

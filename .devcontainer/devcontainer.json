@@ -1,0 +1,97 @@
+{
+  "name": "Painel Templo",
+  "image": "oven/bun:latest",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "20"
+    }
+  },
+  "postCreateCommand": "bun install",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "EditorConfig.EditorConfig",
+        "akamud.vscode-theme-onedark",
+        "emmanuelbeziat.vscode-great-icons",
+        "ms-vscode.makefile-tools",
+        "redhat.vscode-yaml",
+        "biomejs.biome",
+
+        //"esbenp.prettier-vscode",
+        //"dbaeumer.vscode-eslint",
+        //"bradlc.vscode-tailwindcss",
+        //"streetsidesoftware.code-spell-checker",
+        //"streetsidesoftware.code-spell-checker-portuguese-brazilian",
+        //"GitHub.vscode-github-actions",
+        //"ms-playwright.playwright",
+
+        "ms-azuretools.vscode-docker"
+      ],
+      "settings": {
+        // General
+        "editor.defaultFormatter": "EditorConfig.EditorConfig",
+        "editor.fontFamily": "'FiraCode Nerd Font', 'Hack Nerd Font'",
+        "editor.fontLigatures": true,
+        "editor.formatOnPaste": true,
+        "editor.formatOnSave": true,
+        "editor.formatOnSaveMode": "file",
+        "editor.codeActionsOnSave": {
+          "source.fixAll.biome": "explicit",
+          "source.organizeImports.biome": "explicit"
+        },
+        "editor.insertSpaces": true,
+        "editor.minimap.enabled": true,
+        "editor.minimap.maxColumn": 120,
+        "editor.minimap.side": "right",
+        "editor.rulers": [80, 100, 120],
+        "editor.tabSize": 2,
+        "editor.wordWrap": "on",
+        "files.encoding": "utf8",
+        "files.eol": "\n",
+        "files.insertFinalNewline": true,
+        "files.trimTrailingWhitespace": true,
+        "git.useEditorAsCommitInput": true,
+        //"markdownShiki.theme": "monokai",
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "terminal.integrated.fontFamily": "FiraCode Nerd Font",
+        "workbench.colorTheme": "Atom One Dark",
+        "workbench.iconTheme": "vscode-great-icons",
+
+        "css.lint.unknownAtRules": "ignore",
+
+        // Copilot
+        // "github.copilot.enable": {
+        //   "*": true,
+        //   "plaintext": false,
+        //   "markdown": true,
+        //   "scminput": false
+        // },
+        // "github.copilot.nextEditSuggestions.enabled": true,
+
+        // Spell check
+        //"cSpell.language": "en,pt,pt_BR",
+
+        // Docker
+        // "[dockerfile]": {
+        //   "editor.defaultFormatter": "ms-azuretools.vscode-containers"
+        // },
+
+        // Makefile
+        "[makefile]": {
+          "editor.insertSpaces": false,
+          "editor.tabSize": 4
+        },
+
+        // JSON
+        // "[json]": {
+        //   "editor.defaultFormatter": "vscode.json-language-features"
+        // },
+
+        // YAML
+        "[yaml]": {
+          "editor.defaultFormatter": "redhat.vscode-yaml"
+        }
+      }
+    }
+  }
+}

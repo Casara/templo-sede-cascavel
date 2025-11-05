@@ -93,7 +93,7 @@ export default function Page() {
         loanDue: 3500,
         templePayment: 0,
         loanPayment: 0,
-        available: 5396.21,
+        available: 620,
         paidTotal: 0,
         supportFund: 0,
       },

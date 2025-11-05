@@ -1,4 +1,4 @@
-export type MonthProps = {
+export type Month = {
   month: string;
   templeDue: number;
   loanDue: number;
@@ -9,17 +9,7 @@ export type MonthProps = {
   supportFund?: number;
 };
 
-export type PixProps = {
-  key: string;
-  qrcodeValue: string;
-};
-
-export type Props = {
-  churchName: string;
-  templeImage: string;
-  pix: PixProps;
-  entryValue: number;
-  totalValue: number;
+export type Data = {
+  months: Month[];
   updatedAt: string;
-  months: MonthProps[];
 };

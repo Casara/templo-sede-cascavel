@@ -20,7 +20,7 @@
     "format:check": "biome format"
   },
   "dependencies": {
-    "html2canvas": "1.4.1",
+    "dayjs": "^1.11.19",
     "lucide-react": "^0.552.0",
     "next": "16.0.1",
     "postcss": "8.5.6",

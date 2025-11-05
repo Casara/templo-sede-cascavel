@@ -13,7 +13,7 @@ import {
   YAxis,
 } from 'recharts';
 
-import type { MonthProps, Props } from '@/types';
+import type { Month } from '@/types';
 
 const barColors: Record<string, string> = {
   paid: '#28a745', // green
@@ -23,7 +23,7 @@ const barColors: Record<string, string> = {
   noPayment: '#f44336', // red
 };
 
-function getMonthStatus(month: MonthProps): string {
+function getMonthStatus(month: Month): string {
   const totalDue = month.templeDue + month.loanDue;
   const totalPaid = month.templePayment + month.loanPayment;
 
@@ -90,20 +90,28 @@ const CustomTooltip = ({
   );
 };
 
-export default function TempleTimeline(data: Props) {
-  const totalPaid =
-    data.entryValue + data.months.reduce((s, m) => s + m.paidTotal, 0);
-  const remaining = data.totalValue - totalPaid;
-  const available = data.months.at(-1)?.available ?? 0;
-  const supportTotal = data.months.reduce(
-    (s, m) => s + (m.supportFund ?? 0),
-    0,
-  );
+interface TimelineProps {
+  entryValue: number;
+  totalValue: number;
+  updatedAt?: string;
+  months?: Month[];
+}
+
+export default function TempleTimeline({
+  entryValue,
+  totalValue,
+  updatedAt,
+  months = [],
+}: TimelineProps) {
+  const totalPaid = entryValue + months.reduce((s, m) => s + m.paidTotal, 0);
+  const remaining = totalValue - totalPaid;
+  const available = months.at(-1)?.available ?? 0;
+  const supportTotal = months.reduce((s, m) => s + (m.supportFund ?? 0), 0);
 
   const formatCurrency = (v: number) =>
     v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
-  const chartData = data.months.map((m) => {
+  const chartData = months.map((m) => {
     const totalDue = m.templeDue + m.loanDue;
     const totalPaid = m.templePayment + m.loanPayment;
     const pending = Math.max(totalDue - totalPaid, 0);
@@ -127,15 +135,10 @@ export default function TempleTimeline(data: Props) {
   return (
     <div className="bg-white rounded-lg shadow p-6 space-y-6">
       <header className="space-y-2 text-center">
-        <h2 className="text-2xl font-bold text-gray-800">{data.churchName}</h2>
-        <p className="text-sm text-gray-500">
-          Atualizado em{' '}
-          {new Date(data.updatedAt).toLocaleDateString('pt-BR', {
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric',
-          })}
-        </p>
+        <h2 className="text-2xl font-bold text-gray-800">
+          IPAD Ministério Restauração — Área Oeste do Paraná
+        </h2>
+        <p className="text-sm text-gray-500">Atualizado em {updatedAt}</p>
       </header>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
@@ -144,14 +147,14 @@ export default function TempleTimeline(data: Props) {
           <div className="font-semibold text-green-800">
             {formatCurrency(totalPaid)}{' '}
             <span className="text-xs text-green-600">
-              ({((totalPaid / data.totalValue) * 100).toFixed(1)}%)
+              ({((totalPaid / totalValue) * 100).toFixed(1)}%)
             </span>
           </div>
           <div className="absolute bottom-0 left-0 w-full h-2 bg-green-200 rounded-b-full overflow-hidden">
             <div
               className="h-full bg-green-600 transition-all duration-700"
               style={{
-                width: `${(totalPaid / data.totalValue) * 100}%`,
+                width: `${(totalPaid / totalValue) * 100}%`,
               }}
             ></div>
           </div>
@@ -161,14 +164,14 @@ export default function TempleTimeline(data: Props) {
           <div className="font-semibold text-red-800">
             {formatCurrency(remaining)}{' '}
             <span className="text-xs text-red-600">
-              ({((remaining / data.totalValue) * 100).toFixed(1)}%)
+              ({((remaining / totalValue) * 100).toFixed(1)}%)
             </span>
           </div>
           <div className="absolute bottom-0 left-0 w-full h-2 bg-red-200 rounded-b-full overflow-hidden">
             <div
               className="h-full bg-red-600 transition-all duration-700"
               style={{
-                width: `${(remaining / data.totalValue) * 100}%`,
+                width: `${(remaining / totalValue) * 100}%`,
               }}
             ></div>
           </div>

@@ -2,14 +2,16 @@
 
 import { QRCodeCanvas } from 'qrcode.react';
 
-import type { Props } from '@/types';
+const PIX_KEY = 'tesouraria.o.parana@restauramundo.com';
+const QRCODE_VALUE =
+  '00020101021126590014br.gov.bcb.pix0137tesouraria.o.parana@restauramundo.com5204000053039865802BR5925IGREJA PENTECOSTAL ASSEMB6012PORTO ALEGRE62070503***63043EC2';
 
-export default function PixSection(data: Props) {
+export default function PixSection() {
   return (
     <div
       className="relative rounded-lg overflow-hidden shadow-lg print:shadow-none"
       style={{
-        backgroundImage: `url('/templo-sede-cascavel/${data.templeImage}')`,
+        backgroundImage: `url('/templo-sede-cascavel/templo.jpg')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}
@@ -24,12 +26,12 @@ export default function PixSection(data: Props) {
             Contribua via PIX
           </div>
           <div className="text-base sm:text-lg md:text-xl font-semibold tracking-wide drop-shadow-md break-all">
-            {data.pix.key}
+            {PIX_KEY}
           </div>
         </div>
 
         <div className="bg-white p-3 rounded-lg shadow-md">
-          <QRCodeCanvas value={data.pix.qrcodeValue} size={100} />
+          <QRCodeCanvas value={QRCODE_VALUE} size={100} />
         </div>
 
         <blockquote className="max-w-xl text-base sm:text-lg md:text-xl italic text-center leading-relaxed drop-shadow-lg">

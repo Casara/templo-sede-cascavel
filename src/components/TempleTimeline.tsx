@@ -1,6 +1,5 @@
 'use client';
 
-import { Info } from 'lucide-react';
 import {
   Bar,
   BarChart,
@@ -28,10 +27,10 @@ function getMonthStatus(month: Month): string {
   const totalPaid = month.templePayment + month.loanPayment;
 
   const paid = totalPaid >= totalDue;
-  const hasSupport = !!month.supportFund && month.supportFund > 0;
+  // const hasSupport = !!month.supportFund && month.supportFund > 0;
   const hasAvailable = month.available > 0;
 
-  if (paid && hasSupport) return 'paidWithSupport'; // 🟧 Orange
+  // if (paid && hasSupport) return 'paidWithSupport'; // 🟧 Orange
   if (paid) return 'paid'; // 🟩 Green
   if (!paid && hasAvailable && month.available < totalDue) return 'partial'; // 🟨 Yellow
   if (!paid && month.available >= totalDue) return 'totalInCash'; // 🟦 Blue
@@ -126,7 +125,7 @@ export default function TempleTimeline({
       totalDue,
       totalPaid,
       pending,
-      progress: paidOrAvailable,
+      progress: paidOrAvailable - (m.supportFund || 0),
       remaining,
       status: getMonthStatus(m),
     };
@@ -204,6 +203,13 @@ export default function TempleTimeline({
           />
 
           {/* Overlaid bar: amount paid/available */}
+          <Bar
+            dataKey="supportFund"
+            stackId="a"
+            fill="#ff9800"
+            fillOpacity={0.8}
+          />
+
           <Bar dataKey="progress" fillOpacity={0.95} stackId="a">
             {chartData.map((entry) => (
               <Cell
@@ -223,14 +229,28 @@ export default function TempleTimeline({
         </BarChart>
       </ResponsiveContainer>
 
-      <footer className="text-xs text-gray-500 text-center flex flex-col items-center gap-2">
-        <div className="flex items-center gap-2">
-          <Info size={14} />
-          <span>
-            Meses destacados em{' '}
-            <span className="text-orange-600 font-medium">laranja</span>{' '}
-            receberam ajuda do fundo.
-          </span>
+      <footer className="text-xs text-gray-600 text-center flex flex-col items-center gap-2">
+        <div className="flex flex-wrap justify-center gap-4">
+          <div className="flex items-center gap-1">
+            <span className="inline-block w-3 h-3 rounded-full bg-green-600"></span>
+            <span>Pago (valor já quitado)</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="inline-block w-3 h-3 rounded-full bg-orange-500"></span>
+            <span>Ajuda do fundo convencional</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="inline-block w-3 h-3 rounded-full bg-yellow-400"></span>
+            <span>Arrecadação parcial ainda não usada</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="inline-block w-3 h-3 rounded-full bg-blue-500"></span>
+            <span>Valor total disponível (ainda não pago)</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="inline-block w-3 h-3 rounded-full bg-red-500"></span>
+            <span>Falta para completar o valor necessário</span>
+          </div>
         </div>
       </footer>
     </div>

@@ -6,7 +6,7 @@ export type Month = {
   loanPayment: number;
   available: number;
   paidTotal: number;
-  supportFund?: number;
+  faoiLoan?: number;
 };
 
 export type Data = {

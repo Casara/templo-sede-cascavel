@@ -14,29 +14,6 @@ import {
 
 import type { Month } from '@/types';
 
-const barColors: Record<string, string> = {
-  paid: '#28a745', // green
-  paidWithSupport: '#ff9800', // orange
-  partial: '#fdd835', // yellow
-  totalInCash: '#2196f3', // blue
-  noPayment: '#f44336', // red
-};
-
-function getMonthStatus(month: Month): string {
-  const totalDue = month.templeDue + month.loanDue;
-  const totalPaid = month.templePayment + month.loanPayment;
-
-  const paid = totalPaid >= totalDue;
-  // const hasSupport = !!month.supportFund && month.supportFund > 0;
-  const hasAvailable = month.available > 0;
-
-  // if (paid && hasSupport) return 'paidWithSupport'; // 🟧 Orange
-  if (paid) return 'paid'; // 🟩 Green
-  if (!paid && hasAvailable && month.available < totalDue) return 'partial'; // 🟨 Yellow
-  if (!paid && month.available >= totalDue) return 'totalInCash'; // 🟦 Blue
-  return 'noPayment'; // 🟥 Red
-}
-
 const CustomTooltip = ({
   active,
   payload,
@@ -57,14 +34,20 @@ const CustomTooltip = ({
       </div>
       <div>
         Pago:{' '}
-        <span className="font-medium text-green-700">
-          {formatCurrency(data.totalPaid)}
+        <span
+          className={`font-medium ${
+            data.paymentBar >= data.totalDue
+              ? 'text-green-700'
+              : 'text-blue-700'
+          }`}
+        >
+          {formatCurrency(data.paymentBar)}
         </span>
       </div>
       {data.available > 0 && (
         <div>
           Disponível em caixa:{' '}
-          <span className="font-medium text-blue-700">
+          <span className="font-medium text-yellow-700">
             {formatCurrency(data.available)}
           </span>
         </div>
@@ -77,11 +60,11 @@ const CustomTooltip = ({
           </span>
         </div>
       )}
-      {data.supportFund > 0 && (
+      {data.faoiLoan > 0 && (
         <div>
-          Ajuda do fundo:{' '}
+          Empréstimo FAOI:{' '}
           <span className="font-medium text-orange-700">
-            {formatCurrency(data.supportFund)}
+            {formatCurrency(data.faoiLoan)}
           </span>
         </div>
       )}
@@ -105,7 +88,7 @@ export default function TempleTimeline({
   const totalPaid = entryValue + months.reduce((s, m) => s + m.paidTotal, 0);
   const remaining = totalValue - totalPaid;
   const available = months.at(-1)?.available ?? 0;
-  const supportTotal = months.reduce((s, m) => s + (m.supportFund ?? 0), 0);
+  const faoiLoanTotal = months.reduce((s, m) => s + (m.faoiLoan ?? 0), 0);
 
   const formatCurrency = (v: number) =>
     v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -113,21 +96,25 @@ export default function TempleTimeline({
   const chartData = months.map((m) => {
     const totalDue = m.templeDue + m.loanDue;
     const totalPaid = m.templePayment + m.loanPayment;
-    const pending = Math.max(totalDue - totalPaid, 0);
-    const paidOrAvailable = Math.min(
-      totalDue,
-      (m.templePayment || 0) + (m.loanPayment || 0) + (m.available || 0),
-    );
-    const remaining = Math.max(totalDue - paidOrAvailable, 0);
+    const faoiLoan = m.faoiLoan || 0;
+    const available = m.available || 0;
+
+    // Valor total que já foi pago (sem contar ajuda do fundo)
+    const paymentBar = Math.min(totalPaid - faoiLoan, totalDue);
+
+    // Valor disponível em caixa (não usado ainda)
+    const availableBar = totalPaid >= totalDue ? 0 : available;
+
+    const remaining = Math.max(totalDue - totalPaid - available, 0);
 
     return {
       ...m,
       totalDue,
       totalPaid,
-      pending,
-      progress: paidOrAvailable - (m.supportFund || 0),
       remaining,
-      status: getMonthStatus(m),
+      paymentBar,
+      availableBar,
+      faoiLoan,
     };
   });
 
@@ -182,9 +169,12 @@ export default function TempleTimeline({
           </div>
         </div>
         <div className="bg-orange-100 p-3 rounded">
-          <div className="text-xs text-orange-700">Ajuda do fundo</div>
+          <div className="text-xs text-orange-700">
+            Empréstimo{' '}
+            <abbr title="Fundo de Apoio ao Obreiro Integrado">FAOI</abbr>
+          </div>
           <div className="font-semibold text-orange-800">
-            {formatCurrency(supportTotal)}
+            {formatCurrency(faoiLoanTotal)}
           </div>
         </div>
       </div>
@@ -202,29 +192,43 @@ export default function TempleTimeline({
             cursor={{ fill: 'rgba(0,0,0,0.05)' }}
           />
 
-          {/* Overlaid bar: amount paid/available */}
+          {/* 🟧 Ajuda do fundo */}
           <Bar
-            dataKey="supportFund"
+            dataKey="faoiLoan"
             stackId="a"
             fill="#ff9800"
-            fillOpacity={0.8}
+            fillOpacity={0.9}
+            isAnimationActive={false}
           />
 
-          <Bar dataKey="progress" fillOpacity={0.95} stackId="a">
+          {/* 🟦 / 🟩 Pagamentos realizados */}
+          <Bar dataKey="paymentBar" stackId="a" fillOpacity={0.95}>
             {chartData.map((entry) => (
               <Cell
                 key={`cell-${entry.month}`}
-                fill={barColors[entry.status]}
+                fill={
+                  entry.paymentBar >= entry.totalDue ? '#28a745' : '#2196f3'
+                } // verde se cobriu o total, azul se parcial
               />
             ))}
           </Bar>
 
-          {/* Bar of what remains to be paid (top part) */}
+          {/* 🟨 Valor disponível em caixa (ainda não usado) */}
+          <Bar
+            dataKey="availableBar"
+            stackId="a"
+            fill="#fdd835"
+            fillOpacity={0.9}
+            isAnimationActive={false}
+          />
+
+          {/* 🔴 Base — total devido */}
           <Bar
             dataKey="remaining"
             stackId="a"
-            fill="#f44336"
+            fill="#fca5a5" // vermelho claro
             fillOpacity={0.5}
+            isAnimationActive={false}
           />
         </BarChart>
       </ResponsiveContainer>
@@ -232,21 +236,28 @@ export default function TempleTimeline({
       <footer className="text-xs text-gray-600 text-center flex flex-col items-center gap-2">
         <div className="flex flex-wrap justify-center gap-4">
           <div className="flex items-center gap-1">
-            <span className="inline-block w-3 h-3 rounded-full bg-green-600"></span>
-            <span>Pago (valor já quitado)</span>
-          </div>
-          <div className="flex items-center gap-1">
             <span className="inline-block w-3 h-3 rounded-full bg-orange-500"></span>
-            <span>Ajuda do fundo convencional</span>
+            <span>
+              Empréstimo{' '}
+              <abbr title="Fundo de Apoio ao Obreiro Integrado">FAOI</abbr>
+            </span>
           </div>
-          <div className="flex items-center gap-1">
-            <span className="inline-block w-3 h-3 rounded-full bg-yellow-400"></span>
-            <span>Arrecadação parcial ainda não usada</span>
-          </div>
+
           <div className="flex items-center gap-1">
             <span className="inline-block w-3 h-3 rounded-full bg-blue-500"></span>
-            <span>Valor total disponível (ainda não pago)</span>
+            <span>Pago (parcial)</span>
           </div>
+
+          <div className="flex items-center gap-1">
+            <span className="inline-block w-3 h-3 rounded-full bg-green-600"></span>
+            <span>Pago (integral)</span>
+          </div>
+
+          <div className="flex items-center gap-1">
+            <span className="inline-block w-3 h-3 rounded-full bg-yellow-400"></span>
+            <span>Valor arrecadado (ainda não usado)</span>
+          </div>
+
           <div className="flex items-center gap-1">
             <span className="inline-block w-3 h-3 rounded-full bg-red-500"></span>
             <span>Falta para completar o valor necessário</span>

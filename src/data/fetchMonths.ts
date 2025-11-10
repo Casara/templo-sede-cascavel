@@ -49,7 +49,7 @@ export async function fetchData(): Promise<Data> {
       loanPayment = '',
       available = '',
       paidTotal = '',
-      supportFund = '',
+      faoiLoan = '',
       updatedAt = '',
     ] = row;
 
@@ -69,7 +69,7 @@ export async function fetchData(): Promise<Data> {
       loanPayment: parseNumber(loanPayment),
       available: parseNumber(available),
       paidTotal: parseNumber(paidTotal),
-      supportFund: parseNumber(supportFund) || undefined,
+      faoiLoan: parseNumber(faoiLoan) || undefined,
     });
   }
 
